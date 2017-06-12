@@ -1,12 +1,12 @@
 {
   "name": "ember-google-geocoder",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Small Ember service for geocoding and reverse geocoding using Google's API",
   "keywords": [
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Devin Weaver (@sukima) <suki@tritarget.org>",
   "directories": {
     "doc": "doc",
     "test": "tests"
