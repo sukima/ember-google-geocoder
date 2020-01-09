@@ -1,4 +1,7 @@
-import Ember from 'ember';
+import { Promise } from 'rsvp';
+import { assert } from '@ember/debug';
+import { computed, get } from '@ember/object';
+import Service from '@ember/service';
 import { Address, Point, Viewport } from '../-google-maps';
 import {
   GeoCodingError, GeoCodingOverLimitError, GeoCodingRequestDeniedError,
@@ -6,22 +9,22 @@ import {
 } from '../-geo-coding-error';
 import maybe from '../-maybe';
 
-export default Ember.Service.extend({
+export default Service.extend({
   name: 'Google Maps',
 
-  google: Ember.computed(function () {
+  google: computed(function () {
     return window.google;
-  }).volatile(),
+  }),
 
-  _geocoder: Ember.computed(function () {
+  _geocoder: computed(function () {
     const google = this.get('google');
     return new google.maps.Geocoder();
   }),
 
   _promisedGeocode(args) {
     const google = this.get('google');
-    Ember.assert('Google API is unavailable', google);
-    return new Ember.RSVP.Promise((resolve, reject) => {
+    assert('Google API is unavailable', google);
+    return new Promise((resolve, reject) => {
       const {
         OK, ZERO_RESULTS, OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST
       } = google.maps.GeocoderStatus;
@@ -29,7 +32,7 @@ export default Ember.Service.extend({
         if (status === OK || status === ZERO_RESULTS) {
           resolve(results);
         } else {
-          let message = Ember.get(results, 'error_message') || '';
+          let message = get(results, 'error_message') || '';
           switch (status) {
             case OVER_QUERY_LIMIT:
               return reject(new GeoCodingOverLimitError(message, results));
@@ -64,9 +67,9 @@ export default Ember.Service.extend({
   // args => {address: 'new haven, ct'}
   query(args) {
     return this._promisedGeocode(args).then(results => {
-      const loc          = maybe(Ember.get(results, '0.geometry.location'));
-      const viewport     = maybe(Ember.get(results, '0.geometry.viewport'));
-      const addressParts = maybe(Ember.get(results, '0.address_components'));
+      const loc          = maybe(get(results, '0.geometry.location'));
+      const viewport     = maybe(get(results, '0.geometry.viewport'));
+      const addressParts = maybe(get(results, '0.address_components'));
 
       let retVal      = loc.map(loc => new Point(loc)).getOrElse({});
       retVal.results  = results;

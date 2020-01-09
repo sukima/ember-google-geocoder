@@ -3,9 +3,9 @@
 // can upgrade Ember (and consequently Babel) we will have to roll our own.
 // This was taken from [Ember 2.13][1].
 // [1]: https://github.com/emberjs/ember.js/blob/v2.13.0/packages/ember-debug/lib/error.js
-import Ember from 'ember';
+import EmberError from '@ember/error';
 
-export class GeoCodingError extends Ember.Error {
+export class GeoCodingError extends EmberError {
   constructor(message, results) {
     super();
 
